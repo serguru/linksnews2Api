@@ -1,0 +1,29 @@
+{
+    "id": "",
+    "name": "string",
+    "pages": [
+      {
+        "id": "",
+        "name": "Main page",
+        "rows": [
+          {
+            "id": "",
+            "name": "Row 1",
+            "columns": [
+              {
+                "id": "",
+                "name": "Column 1",
+                "links": [
+                  {
+                    "id": "",
+                    "url": "Url 1",
+                    "name": "Link 1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

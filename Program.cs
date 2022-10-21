@@ -11,23 +11,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<ICarCosmosService>(options =>
+
+builder.Services.AddSingleton<IAccountService>(options =>
 {
-    string url = builder.Configuration.GetSection("AzureCosmosDbSettings")
-    .GetValue<string>("URL");
-    string primaryKey = builder.Configuration.GetSection("AzureCosmosDbSettings")
-    .GetValue<string>("PrimaryKey");
-    string dbName = builder.Configuration.GetSection("AzureCosmosDbSettings")
-    .GetValue<string>("DatabaseName");
-    string containerName = builder.Configuration.GetSection("AzureCosmosDbSettings")
-    .GetValue<string>("ContainerName");
+    var section = builder.Configuration.GetSection("AzureCosmosDbSettings");
+    string url = section.GetValue<string>("URL");
+    string primaryKey = section.GetValue<string>("PrimaryKey");
+    string dbName = section.GetValue<string>("DatabaseName");
+    string accountId = section.GetValue<string>("AccountId");
+    string containerName = "Account";
 	
     var cosmosClient = new CosmosClient(
         url,
         primaryKey
     );
 	
-    return new CarCosmosService(cosmosClient, dbName, containerName);
+    return new AccountService(cosmosClient, dbName, containerName, accountId);
 });
 
 var app = builder.Build();
