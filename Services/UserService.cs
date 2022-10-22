@@ -6,6 +6,7 @@ namespace linksnews2API.Services;
 public class UserService : IUserService
 {
     private readonly Container _container;
+    public string? CurrentUser { get; set; }
 
     public UserService(
         CosmosClient cosmosClient,
@@ -28,7 +29,11 @@ public class UserService : IUserService
             logins.AddRange(response);
         }
 
-        return logins.Find(x => x.Name == name && x.Password == password) != null;
+        Login? login = logins.Find(x => x.Name == name && x.Password == password);
+        bool result = login != null;
+        CurrentUser = result ? login.Name : null;
+
+        return result;
     }
 
 }

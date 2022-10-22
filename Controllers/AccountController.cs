@@ -8,15 +8,17 @@ namespace linksnews2API.Controllers;
 public class AccountController : ControllerBase
 {
     public readonly IAccountService _accountService;
-    public AccountController(IAccountService accountService)
+    public readonly IUserService _userService;
+    public AccountController(IAccountService accountService, IUserService userService)
     {
         _accountService = accountService;
+        _userService = userService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetCurrent()
     {
-        var result = await _accountService.GetAll();
+        Account result = await _accountService.GetByName(_userService.CurrentUser);
         return Ok(result);
     }
 
@@ -27,12 +29,7 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("default")]
-    public async Task<IActionResult> GetDefaultAccount()
-    {
-        var result = await _accountService.GetById();
-        return Ok(result);
-    }
+    
 
     [HttpPost]
     public async Task<IActionResult> Post(Account newAccount)

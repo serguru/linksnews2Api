@@ -6,21 +6,19 @@ namespace linksnews2API.Services;
 public class AccountService : IAccountService
 {
     private readonly Container _container;
-    private readonly string _accountId;
+
     public AccountService(
         CosmosClient cosmosClient,
         string databaseName,
-        string containerName,
-        string accountId
+        string containerName
         )
     {
         _container = cosmosClient.GetContainer(databaseName, containerName);
-        _accountId = accountId;
     }
 
     public async Task<List<Account>> GetAll()
     {
-        var sql = "select * from Account as a";
+        var sql = "select * from a";
         var query = _container.GetItemQueryIterator<Account>(new QueryDefinition(sql));
 
         List<Account> result = new List<Account>();
@@ -32,12 +30,35 @@ public class AccountService : IAccountService
 
         return result;
     }
-    public async Task<Account> GetById([Optional] string id)
+    public async Task<Account> GetById(string id)
     {
-        id = id == null ? _accountId : id;
         ItemResponse<Account> response = await _container.ReadItemAsync<Account>(id, new PartitionKey(id));
-
         return response.Resource;
+    }
+
+    public async Task<Account> GetByName(string name)
+    {
+        if (name == null || name.Trim() == string.Empty)
+        {
+            return null;
+        }
+
+        var sql = $"select * from a where a.name = '{name}'";
+        var query = _container.GetItemQueryIterator<Account>(new QueryDefinition(sql));
+
+        List<Account> result = new List<Account>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            result.AddRange(response);
+        }
+
+        if (result.Count == 0) 
+        {
+            return null;
+        }
+
+        return result.First<Account>();
     }
 
     public async Task<Account> Add(Account newAccount)
@@ -57,22 +78,6 @@ public class AccountService : IAccountService
         await _container.DeleteItemAsync<Account>(id, new PartitionKey(id));
     }
 
-    public async Task<bool> CheckLogin(string name, string password)
-    {
-        var sql = "select * from User as u";
-        var query = _container.GetItemQueryIterator<Login>(new QueryDefinition(sql));
-
-        List<Login> logins = new List<Login>();
-        while (query.HasMoreResults)
-        {
-            var response = await query.ReadNextAsync();
-            logins.AddRange(response);
-        }
-
-        return logins.Find(x => x.Name == name && x.Password == password) != null;
-    }
-
-
-    //private
+  
 
 }
