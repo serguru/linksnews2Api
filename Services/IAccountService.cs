@@ -9,4 +9,7 @@ public interface IAccountService
     Task<Account> Add(Account newAccount);
     Task<Account> Update(Account accountToUpdate);
     Task Delete(string id);
+
+    Task<bool> CheckLogin(string name, string password);
+
 }

@@ -1,3 +1,4 @@
+using FiltersSample.Filters;
 using linksnews2API.Services;
 using Microsoft.Azure.Cosmos;
 
@@ -6,7 +7,7 @@ builder.Services.AddCors();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +28,27 @@ builder.Services.AddSingleton<IAccountService>(options =>
     );
 	
     return new AccountService(cosmosClient, dbName, containerName, accountId);
+});
+
+builder.Services.AddSingleton<IUserService>(options =>
+{
+    var section = builder.Configuration.GetSection("AzureCosmosDbSettings");
+    string url = section.GetValue<string>("URL");
+    string primaryKey = section.GetValue<string>("PrimaryKey");
+    string dbName = section.GetValue<string>("DatabaseName");
+    string containerName = "User";
+	
+    var cosmosClient = new CosmosClient(
+        url,
+        primaryKey
+    );
+	
+    return new UserService(cosmosClient, dbName, containerName);
+});
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalActionFilter>();
 });
 
 var app = builder.Build();

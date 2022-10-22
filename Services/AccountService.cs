@@ -57,6 +57,21 @@ public class AccountService : IAccountService
         await _container.DeleteItemAsync<Account>(id, new PartitionKey(id));
     }
 
+    public async Task<bool> CheckLogin(string name, string password)
+    {
+        var sql = "select * from User as u";
+        var query = _container.GetItemQueryIterator<Login>(new QueryDefinition(sql));
+
+        List<Login> logins = new List<Login>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            logins.AddRange(response);
+        }
+
+        return logins.Find(x => x.Name == name && x.Password == password) != null;
+    }
+
 
     //private
 
