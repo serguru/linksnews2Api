@@ -53,7 +53,7 @@ public class AccountService : IAccountService
             result.AddRange(response);
         }
 
-        if (result.Count == 0) 
+        if (result.Count == 0)
         {
             return null;
         }
@@ -61,23 +61,97 @@ public class AccountService : IAccountService
         return result.First<Account>();
     }
 
-    public async Task<Account> Add(Account newAccount)
-    {
-        var item = await _container.CreateItemAsync<Account>(newAccount, new PartitionKey(newAccount.Id));
-        return item;
-    }
+    // public async Task<Account> Add(Account newAccount)
+    // {
+    //     var item = await _container.CreateItemAsync<Account>(newAccount, new PartitionKey(newAccount.Id));
+    //     return item;
+    // }
 
     public async Task<Account> Update(Account accountToUpdate)
     {
+        CheckIds(accountToUpdate);
         var item = await _container.UpsertItemAsync<Account>(accountToUpdate, new PartitionKey(accountToUpdate.Id));
         return item;
     }
 
-    public async Task Delete(string id)
+    // public async Task Delete(string id)
+    // {
+    //     await _container.DeleteItemAsync<Account>(id, new PartitionKey(id));
+    // }
+
+    public void CheckIds(Account account)
     {
-        await _container.DeleteItemAsync<Account>(id, new PartitionKey(id));
+        if (account.Pages == null)
+        {
+            return;
+        }
+        account.Pages.ForEach((Page page) =>
+        {
+            if (page == null)
+            {
+                return;
+            }
+
+            if (page.Id == null || page.Id.Trim() == string.Empty)
+            {
+                page.Id = Guid.NewGuid().ToString();
+            }
+
+            if (page.Rows == null)
+            {
+                return;
+            }
+
+            page.Rows.ForEach((Row row) =>
+            {
+                if (row == null)
+                {
+                    return;
+                }
+
+                if (row.Id == null || row.Id.Trim() == string.Empty)
+                {
+                    row.Id = Guid.NewGuid().ToString();
+                }
+
+                if (row.Columns == null)
+                {
+                    return;
+                }
+
+                row.Columns.ForEach((Column column) =>
+                {
+                    if (column == null)
+                    {
+                        return;
+                    }
+
+                    if (column.Id == null || column.Id.Trim() == string.Empty)
+                    {
+                        column.Id = Guid.NewGuid().ToString();
+                    }
+
+                    if (column.Links == null)
+                    {
+                        return;
+                    }
+
+
+                    column.Links.ForEach((Link link) =>
+                    {
+                        if (link == null)
+                        {
+                            return;
+                        }
+
+                        if (link.Id == null || link.Id.Trim() == string.Empty)
+                        {
+                            link.Id = Guid.NewGuid().ToString();
+                        }
+
+                    });
+                });
+            });
+        });
     }
-
-  
-
 }

@@ -31,13 +31,13 @@ public class AccountController : ControllerBase
 
     
 
-    [HttpPost]
-    public async Task<IActionResult> Post(Account newAccount)
-    {
-        newAccount.Id = Guid.NewGuid().ToString();
-        var result = await _accountService.Add(newAccount);
-        return Ok(result);
-    }
+    // [HttpPost]
+    // public async Task<IActionResult> Post(Account newAccount)
+    // {
+    //     newAccount.Id = Guid.NewGuid().ToString();
+    //     var result = await _accountService.Add(newAccount);
+    //     return Ok(result);
+    // }
 
     [HttpPut]
     public async Task<IActionResult> Put(Account accountToUpdate)
@@ -46,10 +46,10 @@ public class AccountController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> Delete(string id)
-    {
-        await _accountService.Delete(id);
-        return Ok();
-    }
+    // [HttpDelete]
+    // public async Task<IActionResult> Delete(string id)
+    // {
+    //     await _accountService.Delete(id);
+    //     return Ok();
+    // }
 }
