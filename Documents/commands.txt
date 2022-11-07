@@ -1,1 +1,9 @@
+
+
+Эта команда с последующим копированием файлов на сайт portal.azure.com вроде не сработала в последний раз
 dotnet publish -c Releaze -o ./bin/Publish
+
+Зато сработал вариант right-click на папке Publish -> Deploy to WEB app...
+
+
+

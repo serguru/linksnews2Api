@@ -20,7 +20,7 @@ public class UserService : IUserService
     public async Task<bool> CheckLogin(string name, string password)
     {
         var sql = "select * from a";
-        var query = _container.GetItemQueryIterator<Login>(new QueryDefinition(sql));
+        FeedIterator<Login> query = _container.GetItemQueryIterator<Login>(new QueryDefinition(sql));
 
         List<Login> logins = new List<Login>();
         while (query.HasMoreResults)

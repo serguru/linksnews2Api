@@ -30,17 +30,27 @@ public class AccountService : IAccountService
 
         return result;
     }
+
     public async Task<Account> GetById(string id)
     {
         ItemResponse<Account> response = await _container.ReadItemAsync<Account>(id, new PartitionKey(id));
         return response.Resource;
     }
 
+    // private Account createAccount()
+    // {
+    //     Account result = new Account();
+    //     result.Id = "";
+    //     result.Name = "";
+    //     result.Pages = new List<Page>();
+    //     return result;
+    // } 
+
     public async Task<Account> GetByName(string name)
     {
         if (name == null || name.Trim() == string.Empty)
         {
-            return null;
+            throw new Exception("No user name provided");
         }
 
         var sql = $"select * from a where a.name = '{name}'";
@@ -55,7 +65,7 @@ public class AccountService : IAccountService
 
         if (result.Count == 0)
         {
-            return null;
+            throw new Exception($"No account for a user with name {name} found in DB");
         }
 
         return result.First<Account>();

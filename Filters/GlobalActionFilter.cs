@@ -1,5 +1,6 @@
 ﻿using linksnews2API.Services;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
@@ -7,6 +8,13 @@ namespace FiltersSample.Filters;
 
 public class GlobalActionFilter : IActionFilter
 {
+
+    public readonly IUserService _userService;
+    
+    public GlobalActionFilter(IUserService userService)
+    {
+        _userService = userService;
+    }
 
     public async void OnActionExecuting(ActionExecutingContext context)
     {
@@ -33,16 +41,14 @@ public class GlobalActionFilter : IActionFilter
         dynamic login = JsonConvert.DeserializeObject(value);
         string name = login.name;
         string password = login.password;
-        IUserService service = context.HttpContext.RequestServices.GetService<IUserService>();
+//        IUserService service = context.HttpContext.RequestServices.GetService<IUserService>();
 
-        bool userFound = await service.CheckLogin(name, password);
+        bool userFound = await _userService.CheckLogin(name, password);
 
         if (!userFound) 
         {
             throw new Exception("User not found");
         }
-
-
     }
 
     public void OnActionExecuted(ActionExecutedContext context)

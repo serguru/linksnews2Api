@@ -21,12 +21,12 @@ builder.Services.AddSingleton<IUserService>(options =>
     string primaryKey = section.GetValue<string>("PrimaryKey");
     string dbName = section.GetValue<string>("DatabaseName");
     string containerName = "User";
-	
+
     var cosmosClient = new CosmosClient(
         url,
         primaryKey
     );
-	
+
     return new UserService(cosmosClient, dbName, containerName);
 });
 
@@ -37,19 +37,22 @@ builder.Services.AddSingleton<IAccountService>(options =>
     string primaryKey = section.GetValue<string>("PrimaryKey");
     string dbName = section.GetValue<string>("DatabaseName");
     string containerName = "Account";
-	
+
     var cosmosClient = new CosmosClient(
         url,
         primaryKey
     );
-	
+
     return new AccountService(cosmosClient, dbName, containerName);
 });
 
 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<GlobalActionFilter>();
+    // GlobalActionFilter : IActionFilter did not work properly because on calling
+    // it returned the excution flow to the controller
+    // 
+    // options.Filters.Add<GlobalActionFilter>();
 });
 
 var app = builder.Build();
